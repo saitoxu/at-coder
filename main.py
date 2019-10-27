@@ -1,15 +1,15 @@
 A = input()
 
 def main():
-	chars = list(A)
-	if len(chars) > 1:
-		print(''.join(chars[0:-1]))
-		return
-	elif len(chars) == 1 and chars[0] != 'a':
-		print('a')
-		return
-	else:
-		print('-1')
+    chars = list(A)
+    if len(chars) > 1:
+        print(''.join(chars[0:-1]))
+        return
+    elif len(chars) == 1 and chars[0] != 'a':
+        print('a')
+        return
+    else:
+        print('-1')
 
 main()
 
