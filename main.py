@@ -1,10 +1,17 @@
-xa, ya, xb, yb, xc, yc = map(lambda i: int(i), input().split(' '))
+N = int(input())
 
 def main():
-    a, b, c, d = move_zero(xa, ya, xb, yb, xc, yc)
-    print(abs(a * d - b * c) / 2)
+    cards = ['1', '2', '3', '4', '5', '6']
+    for i in range(0, N % 30):
+        cards = swap(cards, i)
+    print(''.join(cards))
 
-def move_zero(xa, ya, xb, yb, xc, yc):
-    return [xb - xa, yb - ya, xc - xa, yc - ya]
+def swap(cards, i):
+    n = i % 5
+    m = i % 5 + 1
+    tmp = cards[n]
+    cards[n] = cards[m]
+    cards[m] = tmp
+    return cards 
 
 main()
