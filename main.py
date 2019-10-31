@@ -1,11 +1,17 @@
-N, K = map(lambda i: int(i), input().split(' '))
-R = list(map(lambda i: int(i), input().split(' ')))
+import sys
 
 def main():
-    rate = 0
-    R.sort()
-    for i in range(0, K):
-        rate = (rate + R[i + N - K]) / 2
-    print(rate)
+    N = int(input())
+    A = list(map(lambda i: int(i), input().split(' ')))
+    count = 0
+    while True:
+        for index, a in enumerate(A):
+            if a % 2 == 0:
+                A[index] = a // 2
+            else:
+                print(count)
+                sys.exit()
+        count += 1
+    print(count)
 
 main()
