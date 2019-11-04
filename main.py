@@ -1,17 +1,11 @@
-import sys
-
 def main():
-    N = int(input())
-    A = list(map(lambda i: int(i), input().split(' ')))
-    count = 0
-    while True:
-        for index, a in enumerate(A):
-            if a % 2 == 0:
-                A[index] = a // 2
-            else:
-                print(count)
-                sys.exit()
-        count += 1
-    print(count)
+    N, A, B = map(lambda i: int(i), input().split())
+    numbers = []
+    for i in range(N):
+        num = sum(list(map(lambda i: int(i), list(str(i + 1)))))
+        if num >= A and num <= B:
+            numbers.append(i + 1)
+
+    print(sum(numbers))
 
 main()
