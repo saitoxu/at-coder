@@ -1,1 +1,6 @@
 .vscode
+problems/*.py
+!problems/sample.py
+test_cases/*.txt
+!test_cases/sample_in.txt
+!test_cases/sample_out.txt
