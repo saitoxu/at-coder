@@ -15,6 +15,11 @@ def main():
 
     input_file_paths = sorted(glob.glob('test_cases/{problem_name}_in*.txt'.format(problem_name=problem_name)))
     wrong_cases = []
+
+    if len(input_file_paths) == 0:
+        parser.print_help()
+        exit(0)
+
     for input_file_path in input_file_paths:
         command = 'cat {input_file_path} | python {problem_file_path}'.format(
             input_file_path=input_file_path, problem_file_path=problem_file_path)
@@ -49,9 +54,10 @@ def main():
             print_wrong_answer(wc['input_file_path'], wc['results'], wc['answers'])
 
 
-
-
 def check(input_file_path, output_file_path, results, answers):
+    """
+    正解か判定
+    """
     if len(results) != len(answers):
         return False
 
@@ -63,6 +69,9 @@ def check(input_file_path, output_file_path, results, answers):
 
 
 def print_wrong_answer(input_file_path, results, answers):
+    """
+    失敗したテストケースの表示
+    """
     print('')
     print_color('  Test case: ' + input_file_path, pycolor.RED)
     print_color('    expected:', pycolor.RED)
@@ -74,9 +83,14 @@ def print_wrong_answer(input_file_path, results, answers):
 
 
 def print_color(msg, color, newline = True):
+    """
+    色付きのprint
+    """
     end = '\n' if newline else ''
     print(color + msg + pycolor.END, end=end)
 
+
+# ref. https://qiita.com/ironguy/items/8fb3ddadb3c4c986496d
 class pycolor:
     BLACK = '\033[30m'
     RED = '\033[31m'
