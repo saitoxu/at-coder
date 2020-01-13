@@ -4,6 +4,7 @@ services:
     image: python:3.4-alpine
     volumes:
       - .:/usr/src/app
+      - ./bin/acc:/usr/local/bin/acc
     working_dir: /usr/src/app
     tty: true
     stdin_open: true
