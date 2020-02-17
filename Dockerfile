@@ -8,4 +8,4 @@ RUN apk --update-cache \
   make \
   gfortran \
   openblas-dev
-RUN pip install numpy
+RUN pip install numpy beautifulsoup4

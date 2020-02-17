@@ -4,7 +4,8 @@ import argparse
 import subprocess
 import glob
 import os
-
+import urllib.request, urllib.error
+from bs4 import BeautifulSoup
 
 problems_dir = '/usr/src/app/problems'
 
@@ -12,18 +13,18 @@ def main():
     choices = ['create', 'test']
     parser = argparse.ArgumentParser(description='プロジェクトの作成・テストケースの実行')
     parser.add_argument('command', choices=choices, help='実行するコマンド')
-    parser.add_argument('-p', '--problem_dir', help='対象の問題ディレクトリ')
-    parser.add_argument('-t', '--test_case_number', help='テストケース数(任意)')
+    parser.add_argument('-p', '--problem_dir', help='対象の問題ディレクトリ名')
+    parser.add_argument('-t', '--task_url', help='問題のURL(任意)')
 
     args = parser.parse_args()
     if args.command == 'create':
-        create_project(args.problem_dir, args.test_case_number)
+        create_project(args.problem_dir, args.task_url)
     elif args.command == 'test':
         exec_test(args.problem_dir)
     else:
         parser.print_help()
 
-def create_project(problem_dir_path, test_case_number):
+def create_project(problem_dir_path, task_url):
     """
     プロジェクトのテンプレート作成
     """
@@ -31,14 +32,8 @@ def create_project(problem_dir_path, test_case_number):
     if problem_dir_path is None:
         print('プロジェクトのディレクトリを指定してください')
         exit(1)
-    test_case_number = '1' if test_case_number is None else test_case_number
-    try:
-        int(test_case_number)
-    except ValueError:
-        print('テストケース数は数値で指定してください')
-        exit(1)
+    samples = get_samples(task_url)
     # 生成するテストケース数
-    num = 1 if test_case_number is None else int(test_case_number)    
     try:
         # ディレクトリ作成
         problem_dir_full_path = '{}/{}'.format(problems_dir, problem_dir_path)
@@ -46,14 +41,27 @@ def create_project(problem_dir_path, test_case_number):
         # 問題とテストケースのファイルを作成
         with open('{}/main.py'.format(problem_dir_full_path), 'w') as file:
             pass
-        for i in range(1, num + 1):
-            with open('{}/{}.in'.format(problem_dir_full_path, str(i).zfill(2)), 'w') as file:
-                pass
-            with open('{}/{}.out'.format(problem_dir_full_path, str(i).zfill(2)), 'w') as file:
-                pass
+        for i, sample in enumerate(samples):
+            with open('{}/{}.in'.format(problem_dir_full_path, str(i + 1).zfill(2)), 'w') as file:
+                file.write(sample['input'])
+            with open('{}/{}.out'.format(problem_dir_full_path, str(i + 1).zfill(2)), 'w') as file:
+                file.write(sample['output'])
         print('プロジェクトを作成しました')
     except FileExistsError:
         print('指定されたディレクトリはすでに存在します')
+
+def get_samples(task_url):
+    if task_url is None:
+        return [{ 'input': '', 'output': '' }]
+    html = urllib.request.urlopen(url = task_url)
+    soup = BeautifulSoup(html, 'html.parser')
+    pres = soup.find_all('pre')
+    samples = []
+    for n in range(1, len(pres) // 2 - 1, 2):
+        i = pres[n].string.replace('\r', '')
+        o = pres[n + 1].string.replace('\r', '')
+        samples.append({ 'input': i, 'output': o })
+    return samples
 
 def exec_test(problem_dir_path):
     """
