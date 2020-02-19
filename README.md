@@ -16,10 +16,10 @@ $ vi problems/abc001_a/01.in
 $ vi problems/abc001_a/01.out
 ```
 
-問題URLを指定すると入出力例をファイルに保存する
+`-g`を指定すると入出力例をファイルに保存する
 
 ```sh
-$ acc create -p abc001_a -t https://atcoder.jp/contests/abc001/tasks/abc001_a
+$ acc create -p abc001_a -g
 $ vi problems/abc001_a/main.py
 ```
 

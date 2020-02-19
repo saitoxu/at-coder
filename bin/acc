@@ -14,17 +14,17 @@ def main():
     parser = argparse.ArgumentParser(description='プロジェクトの作成・テストケースの実行')
     parser.add_argument('command', choices=choices, help='実行するコマンド')
     parser.add_argument('-p', '--problem_dir', help='対象の問題ディレクトリ名')
-    parser.add_argument('-t', '--task_url', help='問題のURL(任意)')
+    parser.add_argument('-g', '--get_samples', help='問題のサンプルを取得する(任意)', action='store_true')
 
     args = parser.parse_args()
     if args.command == 'create':
-        create_project(args.problem_dir, args.task_url)
+        create_project(args.problem_dir, args.get_samples)
     elif args.command == 'test':
         exec_test(args.problem_dir)
     else:
         parser.print_help()
 
-def create_project(problem_dir_path, task_url):
+def create_project(problem_dir_path, is_get_samples):
     """
     プロジェクトのテンプレート作成
     """
@@ -32,6 +32,10 @@ def create_project(problem_dir_path, task_url):
     if problem_dir_path is None:
         print('プロジェクトのディレクトリを指定してください')
         exit(1)
+    task_url = None
+    if is_get_samples:
+        contest_name = problem_dir_path.split('_')[0]
+        task_url = 'https://atcoder.jp/contests/{}/tasks/{}'.format(contest_name, problem_dir_path)
     samples = get_samples(task_url)
     # 生成するテストケース数
     try:
