@@ -30,14 +30,14 @@ def create_project(problem_dir_path, is_get_samples):
     """
     # バリデーション
     if problem_dir_path is None:
-        print('プロジェクトのディレクトリを指定してください')
+        print('ERROR: プロジェクトのディレクトリを指定してください')
         exit(1)
     task_url = None
     if is_get_samples:
         contest_name = problem_dir_path.split('_')[0]
         task_url = 'https://atcoder.jp/contests/{}/tasks/{}'.format(contest_name, problem_dir_path)
+    # 入出力例
     samples = get_samples(task_url)
-    # 生成するテストケース数
     try:
         # ディレクトリ作成
         problem_dir_full_path = '{}/{}'.format(problems_dir, problem_dir_path)
@@ -52,12 +52,17 @@ def create_project(problem_dir_path, is_get_samples):
                 file.write(sample['output'])
         print('プロジェクトを作成しました')
     except FileExistsError:
-        print('指定されたディレクトリはすでに存在します')
+        print('ERROR: 指定されたディレクトリはすでに存在します')
 
 def get_samples(task_url):
     if task_url is None:
         return [{ 'input': '', 'output': '' }]
-    html = urllib.request.urlopen(url = task_url)
+    html = None
+    try:
+        html = urllib.request.urlopen(url = task_url)
+    except urllib.error.HTTPError:
+        print('WARN: AtCoderの問題ページが見つかりませんでした')
+        return [{ 'input': '', 'output': '' }]
     soup = BeautifulSoup(html, 'html.parser')
     pres = soup.find_all('pre')
     samples = []
@@ -78,8 +83,8 @@ def exec_test(problem_dir_path):
     wrong_cases = []
 
     if len(input_file_paths) == 0:
-        print('テストケースがありません')
-        exit(0)
+        print('ERROR: テストケースがありません')
+        exit(1)
 
     for input_file_path in input_file_paths:
         command = 'cat {} | python {}'.format(input_file_path, problem_file_path)
