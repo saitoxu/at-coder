@@ -59,7 +59,7 @@ def get_samples(task_url):
         return [{ 'input': '', 'output': '' }]
     html = None
     try:
-        html = urllib.request.urlopen(url = task_url)
+        html = urllib.request.urlopen(url = task_url, timeout = 5)
     except urllib.error.HTTPError:
         print('WARN: AtCoderの問題ページが見つかりませんでした')
         return [{ 'input': '', 'output': '' }]
