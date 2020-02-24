@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import glob
 import os
-import urllib.request, urllib.error
+import requests
 from bs4 import BeautifulSoup
 
 problems_dir = '/usr/src/app/problems'
@@ -13,34 +13,35 @@ def main():
     choices = ['create', 'test']
     parser = argparse.ArgumentParser(description='プロジェクトの作成・テストケースの実行')
     parser.add_argument('command', choices=choices, help='実行するコマンド')
-    parser.add_argument('-p', '--problem_dir', help='対象の問題ディレクトリ名')
+    parser.add_argument('-t', '--task_name', help='対象のタスク名')
     parser.add_argument('-g', '--get_samples', help='問題のサンプルを取得する(任意)', action='store_true')
 
     args = parser.parse_args()
     if args.command == 'create':
-        create_project(args.problem_dir, args.get_samples)
+        create_project(args.task_name, args.get_samples)
     elif args.command == 'test':
-        exec_test(args.problem_dir)
+        exec_test(args.task_name)
     else:
         parser.print_help()
 
-def create_project(problem_dir_path, is_get_samples):
+
+def create_project(task_name, is_get_samples):
     """
     プロジェクトのテンプレート作成
     """
     # バリデーション
-    if problem_dir_path is None:
-        print('ERROR: プロジェクトのディレクトリを指定してください')
+    if task_name is None:
+        print('ERROR: タスク名を指定してください')
         exit(1)
     task_url = None
     if is_get_samples:
-        contest_name = problem_dir_path.split('_')[0]
-        task_url = 'https://atcoder.jp/contests/{}/tasks/{}'.format(contest_name, problem_dir_path)
+        contest_name = task_name.split('_')[0]
+        task_url = 'https://atcoder.jp/contests/{}/tasks/{}'.format(contest_name, task_name)
     # 入出力例
     samples = get_samples(task_url)
     try:
         # ディレクトリ作成
-        problem_dir_full_path = '{}/{}'.format(problems_dir, problem_dir_path)
+        problem_dir_full_path = '{}/{}'.format(problems_dir, task_name)
         os.makedirs(problem_dir_full_path)
         # 問題とテストケースのファイルを作成
         with open('{}/main.py'.format(problem_dir_full_path), 'w') as file:
@@ -50,18 +51,23 @@ def create_project(problem_dir_path, is_get_samples):
                 file.write(sample['input'])
             with open('{}/{}.out'.format(problem_dir_full_path, str(i + 1).zfill(2)), 'w') as file:
                 file.write(sample['output'])
-        print('プロジェクトを作成しました')
+        print('タスクのディレクトリを作成しました')
     except FileExistsError:
         print('ERROR: 指定されたディレクトリはすでに存在します')
+
 
 def get_samples(task_url):
     if task_url is None:
         return [{ 'input': '', 'output': '' }]
     html = None
     try:
-        html = urllib.request.urlopen(url = task_url, timeout = 5)
-    except urllib.error.HTTPError:
-        print('WARN: AtCoderの問題ページが見つかりませんでした')
+        login_res = login()
+        session = requests.session()
+        res = session.get(task_url, cookies = login_res.cookies)
+        res.raise_for_status()
+        html = res.text
+    except requests.exceptions.HTTPError:
+        print('WARN: AtCoderの問題ページ取得時にエラーが発生しました')
         return [{ 'input': '', 'output': '' }]
     soup = BeautifulSoup(html, 'html.parser')
     pres = soup.find_all('pre')
@@ -75,11 +81,26 @@ def get_samples(task_url):
         samples.append({ 'input': i, 'output': o })
     return samples
 
-def exec_test(problem_dir_path):
+
+def login():
+    login_url = 'https://atcoder.jp/login'
+    session = requests.session()
+    response = session.get(login_url)
+    bs = BeautifulSoup(response.text, 'html.parser')
+    login_data = {
+        'username': 'saitoxu',
+        'password': 'saitoxu@c0der'
+    }
+    csrf_token = bs.find(attrs={'name': 'csrf_token'}).get('value')
+    login_data['csrf_token'] = csrf_token
+    return session.post(login_url, data = login_data, cookies = response.cookies)
+
+
+def exec_test(task_name):
     """
     テストケースの実行
     """
-    problem_dir_full_path = '{}/{}'.format(problems_dir, problem_dir_path)
+    problem_dir_full_path = '{}/{}'.format(problems_dir, task_name)
 
     input_file_paths = sorted(glob.glob('{}/*.in'.format(problem_dir_full_path)))
     problem_file_path = glob.glob('{}/*.py'.format(problem_dir_full_path))[0]
