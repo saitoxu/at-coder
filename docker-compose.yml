@@ -2,6 +2,9 @@ version: '3'
 services:
   py:
     build: .
+    environment:
+      AC_USERNAME: ${AC_USERNAME}
+      AC_PASSWORD: ${AC_PASSWORD}
     volumes:
       - .:/usr/src/app
       - ./bin/acc:/usr/local/bin/acc
