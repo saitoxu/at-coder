@@ -15,5 +15,6 @@ def binary_search(arr, l, r, x):
         return -1
 
 
-# ary = [1, 2, 3, 4, 5]
-# print(binary_search(ary, 0, len(ary) - 1, 2)) # -> 1
+if __name__ == "__main__":
+    ary = [1, 2, 3, 4, 5]
+    print(binary_search(ary, 0, len(ary) - 1, 2)) # => 1

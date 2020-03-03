@@ -10,14 +10,16 @@ def warshall_floyd(d):
             for j in range(n):
                 d[i][j] = min(d[i][j], d[i][k] + d[k][j])
 
-
-# inf = float('inf')
-# d = [
-#     [  0,   1, inf, inf, inf],
-#     [  1,   0,   1, inf, inf],
-#     [inf,   1,   0,   1, inf],
-#     [inf, inf,   1,   0,   1],
-#     [inf, inf, inf,   1,   0]
-# ]
-# warshall_floyd(d)
-# print(d)
+if __name__ == "__main__":
+    inf = float('inf')
+    # こういう無向グラフ: (0)-(1)-(2)-(3)-(4)
+    d = [
+        [  0,   1, inf, inf, inf],
+        [  1,   0,   1, inf, inf],
+        [inf,   1,   0,   1, inf],
+        [inf, inf,   1,   0,   1],
+        [inf, inf, inf,   1,   0]
+    ]
+    warshall_floyd(d)
+    print(d)
+    # => [[0, 1, 2, 3, 4], [1, 0, 1, 2, 3], [2, 1, 0, 1, 2], [3, 2, 1, 0, 1], [4, 3, 2, 1, 0]]
