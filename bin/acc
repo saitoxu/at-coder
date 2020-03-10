@@ -35,7 +35,7 @@ def create_project(task_name, is_get_samples):
         exit(1)
     task_url = None
     if is_get_samples:
-        contest_name = task_name.split('_')[0]
+        contest_name = '-'.join(task_name.split('_')[:-1])
         task_url = 'https://atcoder.jp/contests/{}/tasks/{}'.format(contest_name, task_name)
     # 入出力例
     samples = get_samples(task_url)
