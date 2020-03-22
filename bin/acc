@@ -4,6 +4,7 @@ import argparse
 import subprocess
 import glob
 import os
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -70,15 +71,22 @@ def get_samples(task_url):
         print('WARN: AtCoderの問題ページ取得時にエラーが発生しました')
         return [{ 'input': '', 'output': '' }]
     soup = BeautifulSoup(html, 'html.parser')
-    pres = soup.find_all('pre')
+    parts = soup.find_all('div', class_='part')
     samples = []
-    input_example = pres[0]
-    for n in range(1, len(pres), 2):
-        if pres[n] == input_example:
-            break
-        i = pres[n].string.replace('\r', '')
-        o = pres[n + 1].string.replace('\r', '')
-        samples.append({ 'input': i, 'output': o })
+    in_pattern = r'^入力例\s\d+$'
+    out_pattern = r'^出力例\s\d+$'
+    for part in parts:
+        h3 = part.find('h3').string
+        if re.match(in_pattern, h3):
+            if len(samples) == 0 or samples[-1]['input'] is not None:
+                samples.append({})
+            pre = part.find('pre')
+            content = pre.string.replace('\r', '')
+            samples[-1]['input'] = content
+        elif re.match(out_pattern, h3):
+            pre = part.find('pre')
+            content = pre.string.replace('\r', '')
+            samples[-1]['output'] = content
     return samples
 
 
