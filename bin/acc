@@ -85,7 +85,9 @@ def get_samples(task_url):
             samples[-1]['input'] = content
         elif re.match(out_pattern, h3):
             pre = part.find('pre')
-            content = pre.string.replace('\r', '')
+            content = ''
+            if pre.string is not None:
+                content = pre.string.replace('\r', '')
             samples[-1]['output'] = content
     return samples
 
