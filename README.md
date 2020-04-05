@@ -1,3 +1,7 @@
+# at-coder
+
+[AtCoder](https://atcoder.jp/)の解答用Dockerコンテナ
+
 ## Get started
 
 Dockerイメージをビルドし、コンテナを立ち上げる
