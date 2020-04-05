@@ -1,9 +1,12 @@
+import sys
+import resource
+from functools import lru_cache
+from collections import deque
+import numpy as np
+
 # ------------------------
 # 再帰回数の上限を変更
 # ------------------------
-import sys
-import resource
-
 sys.setrecursionlimit(10 ** 9)
 # 合わせてスタックの最大サイズを変更する必要があることもある
 # ただしAtCoderではresourceモジュールが使えないらしく, 提出時は除くこと
@@ -53,11 +56,8 @@ print(bin(~0b100))        # => '-0b101' note. 1011(-5)のマイナス表記
 # ------------------------
 # LRU Cache
 # ------------------------
-from functools import lru_cache
-
-# 引数はハッシュ化できる必要がある(リストとかはNG)
 @lru_cache(maxsize=None)
-def factorial(n):
+def factorial(n): # 引数はハッシュ化できる必要がある(リストとかはNG)
     if n == 1:
         return 1
     return n * factorial(n - 1)
@@ -66,8 +66,25 @@ print(factorial(10))
 
 
 # ------------------------
+# キュー・スタック
+# ------------------------
+queue1 = deque([1, 2, 3])
+queue1.append(4) # enqueue
+queue1.popleft() # dequeue
+stack1 = deque([1, 2, 3])
+stack1.append(4) # push
+stack1.pop(4)    # pop
+
+queue2 = [1, 2, 3]
+queue2.append(4) # enqueue
+queue2.pop(0)    # dequeue note. O(n)かかる
+stack2 = [1, 2, 3]
+stack2.append(4) # push
+stack2.pop()     # pop
+
+
+# ------------------------
 # numpy
 # ------------------------
-import numpy as np
 ary = np.asarray([[1, 2, 3], [4, 5, 6]])
 print(ary.shape)
