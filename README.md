@@ -11,11 +11,11 @@ $ docker-compose build
 $ docker-compose run py sh
 ```
 
-### `acc`コマンド
+## How to use
 
 問題を解くときに便利な`acc`コマンドがある
 
-#### `acc create`
+### `acc create`
 
 問題用のプロジェクトを作成する。その後問題を解くPythonと入出力のファイルを編集
 
@@ -40,7 +40,7 @@ AC_USERNAME=username
 AC_PASSWORD=password
 ```
 
-#### `acc test`
+### `acc test`
 
 テストケースを実行する
 
@@ -53,7 +53,7 @@ All test cases are passed.
 
 問題ディレクトリに`0x.in`, `0x.out`のように入出力のファイルが必要
 
-#### `acc clean`
+### `acc clean`
 
 解き終えた問題を`solved`ディレクトリに移動
 
