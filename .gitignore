@@ -1,4 +1,7 @@
 .vscode
 problems/*
 !problems/sample
+!problems/solved
+problems/solved/*
+!problems/solved/.keep
 .env

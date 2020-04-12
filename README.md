@@ -42,3 +42,10 @@ $ acc test -t abc001_a
 
 All test cases are passed.
 ```
+
+解き終えた問題は`solved`ディレクトリに移動
+
+```sh
+$ acc clean
+Done.
+```

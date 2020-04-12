@@ -3,6 +3,7 @@
 import argparse
 import subprocess
 import glob
+import shutil
 import os
 import re
 import requests
@@ -11,17 +12,19 @@ from bs4 import BeautifulSoup
 problems_dir = '/usr/src/app/problems'
 
 def main():
-    choices = ['create', 'test']
-    parser = argparse.ArgumentParser(description='プロジェクトの作成・テストケースの実行')
-    parser.add_argument('command', choices=choices, help='実行するコマンド')
-    parser.add_argument('-t', '--task_name', help='対象のタスク名')
-    parser.add_argument('-g', '--get_samples', help='問題のサンプルを取得する(任意)', action='store_true')
+    choices = ['create', 'test', 'clean']
+    parser = argparse.ArgumentParser(description='create a task / exec test / clean directory')
+    parser.add_argument('command', choices=choices, help='command to execute')
+    parser.add_argument('-t', '--task_name', help='target task name')
+    parser.add_argument('-g', '--get_samples', help='to get task\'s sample (optional)', action='store_true')
 
     args = parser.parse_args()
     if args.command == 'create':
         create_project(args.task_name, args.get_samples)
     elif args.command == 'test':
         exec_test(args.task_name)
+    elif args.command == 'clean':
+        clean_dir()
     else:
         parser.print_help()
 
@@ -32,7 +35,7 @@ def create_project(task_name, is_get_samples):
     """
     # バリデーション
     if task_name is None:
-        print('ERROR: タスク名を指定してください')
+        print('ERROR: Please input task name.')
         exit(1)
     task_url = None
     if is_get_samples:
@@ -52,9 +55,9 @@ def create_project(task_name, is_get_samples):
                 file.write(sample['input'])
             with open('{}/{}.out'.format(problem_dir_full_path, str(i + 1).zfill(2)), 'w') as file:
                 file.write(sample['output'])
-        print('タスクのディレクトリを作成しました')
+        print('Task directory is created successfully.')
     except FileExistsError:
-        print('ERROR: 指定されたディレクトリはすでに存在します')
+        print('ERROR: Target directory already exists.')
 
 
 def get_samples(task_url):
@@ -68,7 +71,7 @@ def get_samples(task_url):
         res.raise_for_status()
         html = res.text
     except requests.exceptions.HTTPError:
-        print('WARN: AtCoderの問題ページ取得時にエラーが発生しました')
+        print('WARN: Error occured when scraping AtCoder task\'s page.')
         return [{ 'input': '', 'output': '' }]
     soup = BeautifulSoup(html, 'html.parser')
     parts = soup.find_all('div', class_='part')
@@ -117,7 +120,7 @@ def exec_test(task_name):
     wrong_cases = []
 
     if len(input_file_paths) == 0:
-        print('ERROR: テストケースがありません')
+        print('ERROR: Test cases are missing.')
         exit(1)
 
     for input_file_path in input_file_paths:
@@ -203,5 +206,30 @@ class pycolor:
     UNDERLINE = '\033[4m'
     INVISIBLE = '\033[08m'
     REVERCE = '\033[07m'
+
+
+def clean_dir():
+    """
+    問いた問題をsolvedディレクトリに移行する
+    """
+    unsolved = '.unsolved'
+    unsolved_dirs = []
+    with open(problems_dir + '/' + unsolved) as f:
+        for line in f:
+            dir_name = line.strip()
+            unsolved_dirs.append(dir_name)
+    files = os.listdir(problems_dir)
+    for f in files:
+        if f.startswith('.'):
+            continue
+        if f == 'sample':
+            continue
+        if f == 'solved':
+            continue
+        if f in unsolved_dirs:
+            continue
+        shutil.move(problems_dir + '/' + f, problems_dir + '/solved/')
+    print('Done.')
+
 
 main()
