@@ -7,6 +7,7 @@ import shutil
 import os
 import re
 import requests
+import textwrap
 from bs4 import BeautifulSoup
 
 problems_dir = '/usr/src/app/problems'
@@ -49,7 +50,18 @@ def create_project(task_name, is_get_samples):
         os.makedirs(problem_dir_full_path)
         # 問題とテストケースのファイルを作成
         with open('{}/main.py'.format(problem_dir_full_path), 'w') as file:
-            pass
+            code = textwrap.dedent('''\
+                import sys
+                input = sys.stdin.readline
+                sys.setrecursionlimit(10 ** 9)
+
+                def main():
+                    pass
+
+                if __name__ == '__main__':
+                    main()
+            ''')
+            file.write(code)
         for i, sample in enumerate(samples):
             with open('{}/{}.in'.format(problem_dir_full_path, str(i + 1).zfill(2)), 'w') as file:
                 file.write(sample['input'])
