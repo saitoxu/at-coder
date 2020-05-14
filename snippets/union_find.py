@@ -29,6 +29,7 @@ class UnionFind:
     def size(self, x):
         return self.sizes[self.find(x)]
 
+
 if __name__ == "__main__":
     uf = UnionFind(5)
     uf.unite(0, 1)

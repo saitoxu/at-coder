@@ -9,5 +9,6 @@ def calc_sum_of_digits(n):
         n //= 10
     return s
 
+
 if __name__ == "__main__":
     print(calc_sum_of_digits(123)) # => 6

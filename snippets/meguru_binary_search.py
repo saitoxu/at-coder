@@ -19,6 +19,7 @@ def binary_search(A, key):
 
     return ok
 
+
 if __name__ == "__main__":
     ary = [1, 2, 3, 5, 8]
     print(binary_search(ary, 4)) # => 4

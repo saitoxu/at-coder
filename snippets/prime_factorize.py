@@ -18,5 +18,6 @@ def prime_factorize(n):
         a.append(n)
     return a
 
+
 if __name__ == "__main__":
     print(prime_factorize(12)) # => [2, 2, 3]

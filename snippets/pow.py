@@ -13,5 +13,6 @@ def pow(x, y):
         c = c >> 1
     return a
 
+
 if __name__ == "__main__":
     print(pow(2, 10))  # => 1024
