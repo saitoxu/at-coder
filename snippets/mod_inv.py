@@ -23,7 +23,7 @@ def ext_gcd2(a, b):
 
 # 逆元計算(aとmは互いに素であることが必要)
 def mod_inv(a, m):
-    g, x, y = ext_gcd(a, m)
+    _, x, _ = ext_gcd(a, m)
     return x % m
 
 
