@@ -2,7 +2,6 @@ import sys
 import resource
 from functools import lru_cache
 from collections import deque
-import numpy as np
 
 # ------------------------
 # 再帰回数の上限を変更
@@ -81,10 +80,3 @@ queue2.pop(0)    # dequeue note. O(n)かかる
 stack2 = [1, 2, 3]
 stack2.append(4) # push
 stack2.pop()     # pop
-
-
-# ------------------------
-# numpy
-# ------------------------
-ary = np.asarray([[1, 2, 3], [4, 5, 6]])
-print(ary.shape)
