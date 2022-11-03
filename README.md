@@ -8,7 +8,7 @@ Dockerイメージをビルドし、コンテナを立ち上げる
 
 ```sh
 $ docker compose build
-$ docker compose run py sh
+$ docker compose run --rm py sh
 ```
 
 ## How to use
